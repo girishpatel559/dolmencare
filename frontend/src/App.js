@@ -23,7 +23,7 @@ function App() {
   const [quoteSent, setQuoteSent] = useState(false);
   const [sellSent, setSellSent] = useState(false);
   const [formError, setFormError] = useState("");
-  const [openFaq, setOpenFaq] = useState(0);
+  const [openFaq, setOpenFaq] = useState(-1);
 
   const submitLead = async (event, type) => {
     event.preventDefault();
