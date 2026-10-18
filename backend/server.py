@@ -6,7 +6,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Dict, Any
+from typing import List, Literal
 import uuid
 from datetime import datetime, timezone
 
@@ -38,8 +38,8 @@ class StatusCheckCreate(BaseModel):
     client_name: str
 
 class LeadCreate(BaseModel):
-    type: str
-    phone: str
+    type: Literal["quote", "sell"]
+    phone: str = Field(min_length=10, max_length=15, pattern=r"^\+?[0-9\s-]{10,15}$")
     brand: str | None = None
     issue: str | None = None
     model: str | None = None
