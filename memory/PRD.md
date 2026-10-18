@@ -24,13 +24,14 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 ## Implemented
 - 2026-10-18 (session 1): full public site, quote/sell lead capture + validation, WhatsApp CTA, FAQ interaction fix, lead error handling fix.
 - 2026-10-18 (session 2): admin auth (login/logout/me/refresh, seeded admin, lockout), admin dashboard with status/type filters and accept/reject, APK upload/replace in admin, public `/api/app/apk-info` + `/api/app/download`, "Dolmencare" rebrand, favicon + page title/meta, framer-motion section reveals + hero masked line reveal, brand marquee, lenis smooth scrolling.
+- 2026-10-18 (session 2): real APK (Dolmencare.apk, ~89 MB) published via admin upload; public download verified byte-identical.
 
 ## Backlog
 - P0: none open.
-- P1: owner uploads the real APK from the admin panel (backend + UI ready, currently "coming soon").
+- P1: none open — APK is live (Dolmencare.apk).
 - P2: lead search/date filter/export; email/WhatsApp notification on accept/reject (needs integration playbook); customer-facing repair status tracking.
 
 ## Next Tasks
-1. Owner uploads real APK at /admin → verify download on public site.
+1. To release an app update, upload the new APK at /admin — it replaces the live download instantly.
 2. Optional: notifications when enquiry status changes.
 3. Optional: admin password change inside the panel (then remove seed hash reconciliation).
