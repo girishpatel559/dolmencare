@@ -39,7 +39,7 @@ export default function SiteLayout({ children }) {
           <div><b>Company</b><Link to="/contact" data-testid="footer-contact-link">Contact Us</Link><Link to="/privacy" data-testid="footer-privacy-link">Privacy Policy</Link><Link to="/delete-account" data-testid="footer-delete-account-link">Delete Account</Link></div>
           <div><b>Reach us</b><a href="tel:+919506636245"><Phone size={13} /> +91 9506636245</a><a href="mailto:dolmenrepairing@gmail.com">dolmenrepairing@gmail.com</a><span>Silvassa, Dadra & Nagar Haveli</span><span>Mon–Sun · 9:00–21:00</span></div>
         </div>
-      </div><div className="container footer-bottom"><span>© 2026 Dolmencare · Operated by Vishashree Corporation</span><span>Made for better phone days <span className="heart">♥</span></span></div></footer>
+      </div><div className="container footer-bottom"><span>© 2026 Dolmencare · Operated by Yashashree Corporation</span><span>Made for better phone days <span className="heart">♥</span></span></div></footer>
     </div>
   );
 }

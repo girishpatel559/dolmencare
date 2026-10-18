@@ -25,7 +25,7 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 - 2026-10-18 (session 1): full public site, quote/sell lead capture + validation, WhatsApp CTA, FAQ interaction fix, lead error handling fix.
 - 2026-10-18 (session 2): admin auth (login/logout/me/refresh, seeded admin, lockout), admin dashboard with status/type filters and accept/reject, APK upload/replace in admin, public `/api/app/apk-info` + `/api/app/download`, "Dolmencare" rebrand, favicon + page title/meta, framer-motion section reveals + hero masked line reveal, brand marquee, lenis smooth scrolling.
 - 2026-10-18 (session 2): real APK (Dolmencare.apk, ~89 MB) published via admin upload; public download verified byte-identical.
-- 2026-10-18 (session 3): multi-page structure — shared SiteLayout (nav + footer) extracted; new routes /services, /contact, /privacy, /delete-account with the owner-supplied copy (Silvassa service area, Vishashree Corporation, Asha Complex address); home updated to Silvassa, pay-after-delivery steps; ScrollManager for cross-page hash anchors; per-page document titles.
+- 2026-10-18 (session 3): multi-page structure — shared SiteLayout (nav + footer) extracted; new routes /services, /contact, /privacy, /delete-account with the owner-supplied copy (Silvassa service area, Yashashree Corporation, Asha Complex address); home updated to Silvassa, pay-after-delivery steps; ScrollManager for cross-page hash anchors; per-page document titles.
 
 ## Backlog
 - P0: none open.

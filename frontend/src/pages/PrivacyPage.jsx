@@ -12,7 +12,7 @@ export default function PrivacyPage() {
           <div className="eyebrow"><span className="eyebrow-line" /> PRIVACY POLICY</div>
           <h1>How Dolmencare handles <span>your information.</span></h1>
           <span className="policy-meta" data-testid="privacy-effective-date">Effective date: 18 October 2026</span>
-          <p>Dolmen Care (Dolmencare) is operated by Vishashree Corporation. This policy explains how information may be handled when you use our mobile repair application, website, or contact our business.</p>
+          <p>Dolmen Care (Dolmencare) is operated by Yashashree Corporation. This policy explains how information may be handled when you use our mobile repair application, website, or contact our business.</p>
         </div>
 
         <div className="prose">
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
           <h2>9. Contact</h2>
           <p>Privacy questions and requests:</p>
           <ul>
-            <li><b>Business operator:</b> Vishashree Corporation</li>
+            <li><b>Business operator:</b> Yashashree Corporation</li>
             <li><b>App/service name:</b> Dolmen Care (Dolmencare)</li>
             <li><b>Email:</b> <a href="mailto:dolmenrepairing@gmail.com">dolmenrepairing@gmail.com</a></li>
             <li><b>Phone:</b> <a href="tel:+919506636245">+91 9506636245</a></li>

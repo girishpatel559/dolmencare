@@ -47,7 +47,7 @@ export default function ContactPage() {
           <h2>Business details</h2>
           <ul>
             <li><b>Business name:</b> Dolmen Care (Dolmencare)</li>
-            <li><b>Business operator:</b> Vishashree Corporation</li>
+            <li><b>Business operator:</b> Yashashree Corporation</li>
             <li><b>Service area:</b> Silvassa and surrounding areas of Dadra & Nagar Haveli</li>
           </ul>
         </div>
