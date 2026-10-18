@@ -1,0 +1,49 @@
+{
+  "app_name": "Dolmen Care - Mobile Repair Pickup & Delivery",
+  "app_type": "landing_page",
+  "theme": {
+    "mode": "light",
+    "primary_archetype": "ORGANIC & EARTHY / TRUST & PRECISION",
+    "primary_color": "#0F172A",
+    "accent_color": "#2563EB",
+    "success_color": "#16A34A",
+    "background_color": "#F8FAFC",
+    "card_background": "#FFFFFF",
+    "text_primary": "#0F172A",
+    "text_muted": "#64748B"
+  },
+  "typography": {
+    "font_family_headings": "Outfit, sans-serif",
+    "font_family_body": "Plus Jakarta Sans, sans-serif",
+    "h1_classes": "text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight",
+    "h2_classes": "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+    "h3_classes": "text-xl sm:text-2xl font-semibold",
+    "body_classes": "text-base text-slate-600 leading-relaxed"
+  },
+  "components": {
+    "header": {
+      "style": "sticky glassmorphism with blur-xl and solid border",
+      "features": ["Logo", "Nav Links", "Contact Pill", "Book Pickup CTA"]
+    },
+    "hero": {
+      "headline": "Your Mobile Repair, Picked Up & Delivered.",
+      "subheadline": "Fast, secure, and hassle-free smartphone repairs. We collect your device from your home or office, repair it using genuine-quality parts, and deliver it back to your doorstep.",
+      "ctas": ["Book a Pickup (WhatsApp)", "Get Instant Quote"]
+    },
+    "interactive_features": [
+      "WhatsApp booking modal/direct trigger with pre-filled details",
+      "Instant Quote calculator (Brand -> Model -> Issue -> Price & Lead Capture)",
+      "Sell Your Old Phone valuation wizard with instant cash quote",
+      "Android APK download banner & modal with QR code",
+      "Live Repair Status Tracker simulator",
+      "FAQ accordion & customer reviews carousel"
+    ]
+  },
+  "image_urls": {
+    "hero_repair": "https://images.pexels.com/photos/6755075/pexels-photo-6755075.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "technician_bench": "https://images.pexels.com/photos/35290682/pexels-photo-35290682.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "delivery_courier": "https://images.pexels.com/photos/7363052/pexels-photo-7363052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "tools_workspace": "https://images.pexels.com/photos/32942100/pexels-photo-32942100.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "instructions_to_main_agent": "Build a stunning, highly polished landing page for 'Dolmen Care' featuring responsive layouts, rich interactive widgets (Instant Quote calculator, Sell Old Phone valuation, WhatsApp pre-filled booking, Android APK download, and Live Status Tracker). Ensure all interactive elements have data-testid attributes and follow E1 design guidelines with generous spacing, custom typography, and zero generic AI templates."
+}
