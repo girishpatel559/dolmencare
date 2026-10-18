@@ -1,0 +1,41 @@
+/* Motion & marquee layer for Dolmencare */
+.hero-line-mask { display: block; overflow: hidden; }
+.hero-line-mask > span { display: block; will-change: transform; }
+
+.brand-marquee {
+  overflow: hidden;
+  position: relative;
+  padding: 6px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.brand-marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+  animation: brand-scroll 38s linear infinite;
+}
+.brand-marquee:hover .brand-marquee-track { animation-play-state: paused; }
+@keyframes brand-scroll { to { transform: translateX(-50%); } }
+.brand-pill {
+  white-space: nowrap;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+
+.button-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-marquee-track { animation: none; }
+}
