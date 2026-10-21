@@ -9,6 +9,7 @@ import ServicesPage from "@/pages/ServicesPage";
 import ContactPage from "@/pages/ContactPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import DeleteAccountPage from "@/pages/DeleteAccountPage";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient({
@@ -39,15 +40,17 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ScrollManager />
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/delete-account" element={<DeleteAccountPage />} />
-          <Route path="/admin" element={<AdminApp />} />
-        </Routes>
+        <LanguageProvider>
+          <ScrollManager />
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/delete-account" element={<DeleteAccountPage />} />
+            <Route path="/admin" element={<AdminApp />} />
+          </Routes>
+        </LanguageProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,

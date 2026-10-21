@@ -1,3 +1,27 @@
+.lang-select {
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.lang-select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+
+html[lang="hi"] body, html[lang="mr"] body,
+html[lang="hi"] button, html[lang="mr"] button,
+html[lang="hi"] input, html[lang="mr"] input,
+html[lang="hi"] select, html[lang="mr"] select {
+  font-family: "Noto Sans Devanagari", system-ui, -apple-system, sans-serif;
+}
+html[lang="gu"] body, html[lang="gu"] button, html[lang="gu"] input, html[lang="gu"] select {
+  font-family: "Noto Sans Gujarati", system-ui, -apple-system, sans-serif;
+}
+
 .page-main { padding: 72px 0 96px; }
 .page-hero { max-width: 780px; margin-bottom: 52px; }
 .page-hero h1 { font-size: clamp(2.1rem, 5vw, 3.3rem); letter-spacing: -0.03em; line-height: 1.06; margin: 20px 0 18px; }
