@@ -43,7 +43,7 @@ export default function BookingModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(event) => event.stopPropagation()}>
+      <div className="modal" data-lenis-prevent onClick={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} data-testid="booking-modal-close"><X /></button>
 
         {view === "form" && (

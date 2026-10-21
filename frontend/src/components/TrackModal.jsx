@@ -47,7 +47,7 @@ export default function TrackModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(event) => event.stopPropagation()}>
+      <div className="modal" data-lenis-prevent onClick={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} data-testid="track-modal-close"><X /></button>
         <div className="eyebrow"><span className="eyebrow-line" /> {T.yourBooking}</div>
         <h2>{T.title}</h2>
