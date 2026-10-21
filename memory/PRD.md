@@ -29,6 +29,7 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 - 2026-10-21 (session 4): footer "Admin Login" link; email status notifications via Emergent-managed Resend (EMERGENT_EMAIL_KEY, from_name "Dolmencare", reply-to business email); optional email field added to quote + sell forms and shown on admin lead cards; PATCH status sends templated accept/reject email when lead has an email; admin UI shows "customer notified" notice. Deploy requested but NOT yet confirmed by user (50 ECU charge pending explicit confirmation).
 - 2026-10-21 (session 5): full i18n — English, हिन्दी, ગુજરાતી, मराठी. Dictionaries in src/i18n/{en,hi,gu,mr}.js, LanguageContext (localStorage `dolmen-lang`, html lang attr), language <select> in nav (data-testid language-select), all public pages + layout + modals translated, Noto Sans Devanagari/Gujarati fonts, WhatsApp book message localized. Admin panel stays English.
 - 2026-10-21 (session 6): replaced both stock photos with owner-supplied technician images — single "Mobile Repair Specialist" portrait in the hero frame, repair collage in the feature-split section.
+- 2026-10-21 (session 6b): feature-split image swapped to the new 12-panel services collage (WA0003); hero + feature frames changed from object-fit:cover to contain with soft backgrounds and full saturation so the owner images are never cropped.
 
 ## Backlog
 - P0: none open.
