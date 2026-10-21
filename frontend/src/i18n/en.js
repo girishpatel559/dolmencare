@@ -125,7 +125,8 @@ export default {
       model: "Phone model", modelPh: "e.g. iPhone 11 64GB",
       condition: "Condition", chooseCondition: "Choose condition",
       conditions: ["Like new", "Good — minor signs of use", "Needs some love"],
-      submit: "Get my valuation", successT: "Valuation request received", successP: "We'll call you soon with a fair estimate for your device."
+      submit: "Get my valuation", successT: "Valuation request received", successP: "We'll call you soon with a fair estimate for your device.",
+      phone: "Your phone number", phonePh: "10-digit mobile number", email: "Email", emailHint: "optional — get status updates", emailPh: "you@example.com"
     },
     formError: "We couldn't send that just now. Please call us at +91 9506636245.",
     done: "Done"
