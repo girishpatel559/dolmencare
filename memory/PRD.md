@@ -32,6 +32,7 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 - 2026-10-21 (session 6b): feature-split image swapped to the new 12-panel services collage (WA0003); hero + feature frames changed from object-fit:cover to contain with soft backgrounds and full saturation so the owner images are never cropped.
 - 2026-10-21 (session 6c): hero frame no longer forces a tall aspect ratio — it hugs the image's natural 3:2 shape with a soft shadow, so no gray letterbox slab on mobile/desktop.
 - 2026-10-21 (session 6d): hero image now displayed in a proper circle (border-radius 50%, aspect 1:1, contain fit, matching circular decorative outline).
+- 2026-10-21 (session 6e): per owner request, circle reverted — hero image now in a rounded-square box (28px radius, natural aspect, no crop, offset outline ring).
 
 ## Backlog
 - P0: none open.
