@@ -12,6 +12,50 @@
 }
 .lang-select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
 
+.whatsapp-btn { background: #16a34a !important; color: #fff !important; }
+.whatsapp-btn:hover { background: #15803d !important; }
+
+.booking-id-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 4px 0 10px;
+}
+.booking-success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.booking-detail-list { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.booking-detail-list li { display: flex; gap: 10px; font-size: 14.5px; color: #334155; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; }
+.booking-detail-list li b { min-width: 120px; color: #94a3b8; font-weight: 600; }
+
+.modal textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+}
+.modal textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+
+.track-result { margin-top: 18px; text-align: left; }
+.track-result-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.track-pipeline { display: flex; gap: 4px; margin-top: 18px; overflow-x: auto; padding-bottom: 6px; }
+.track-step { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 78px; flex: 1; }
+.track-dot { width: 12px; height: 12px; border-radius: 50%; background: #e2e8f0; border: 2px solid #cbd5e1; }
+.track-step small { font-size: 10px; color: #94a3b8; text-align: center; line-height: 1.3; }
+.track-step.done .track-dot { background: #16a34a; border-color: #16a34a; }
+.track-step.done small { color: #15803d; }
+.track-step.current .track-dot { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18); }
+.track-step.current small { font-weight: 700; }
+
 html[lang="hi"] body, html[lang="mr"] body,
 html[lang="hi"] button, html[lang="mr"] button,
 html[lang="hi"] input, html[lang="mr"] input,

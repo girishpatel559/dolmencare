@@ -33,6 +33,7 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 - 2026-10-21 (session 6c): hero frame no longer forces a tall aspect ratio — it hugs the image's natural 3:2 shape with a soft shadow, so no gray letterbox slab on mobile/desktop.
 - 2026-10-21 (session 6d): hero image now displayed in a proper circle (border-radius 50%, aspect 1:1, contain fit, matching circular decorative outline).
 - 2026-10-21 (session 6e): per owner request, circle reverted — hero image now in a rounded-square box (28px radius, natural aspect, no crop, offset outline ring).
+- 2026-10-21 (session 7): full repair booking system — booking form modal (brand/model/problem/description/name/phone/address, translated ×4) replaces direct WhatsApp jump; bookings saved to MongoDB with DC-XXXXXX IDs + client_token duplicate protection; customer Track Booking modal (ID + phone verified, privacy-safe response, status pipeline UI); admin Bookings panel (9-status workflow, reject reason, internal notes, per-customer WhatsApp chat link, filters); Business Contact Settings card (WhatsApp number in DB, public /api/settings/whatsapp feeds every WhatsApp button via business.js); Chat on WhatsApp header button; booking success offers View Details + WhatsApp chat with prefilled booking details.
 
 ## Backlog
 - P0: none open.

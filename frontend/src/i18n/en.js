@@ -1,9 +1,35 @@
 export default {
   bookMessage: "Hi Dolmencare! I'd like to book a doorstep pickup for my phone. Please share the next steps.",
+  booking: {
+    eyebrow: "BOOK A REPAIR", title: "Book a Repair",
+    intro: "Fill in the details below — we'll call to confirm your pickup shortly.",
+    brand: "Mobile Brand", chooseBrand: "Choose brand",
+    brands: ["Samsung", "Apple iPhone", "Vivo", "Oppo", "Xiaomi", "Realme", "OnePlus", "Motorola", "Other"],
+    model: "Mobile Model", modelPh: "e.g. Samsung Galaxy S23",
+    problem: "Problem Type", chooseProblem: "Choose problem",
+    problems: ["Screen damage", "Battery issue", "Charging problem", "Water damage", "Software problem", "Speaker/microphone issue", "Phone not switching on", "Other"],
+    desc: "Describe Your Problem", descOpt: "optional", descPh: "Anything else we should know…",
+    name: "Customer Name", namePh: "Your full name",
+    phone: "Mobile Number", phonePh: "10-digit mobile number",
+    address: "Pickup Area/Address", addressPh: "Flat, street, area, landmark…",
+    submit: "Book Repair", submitting: "Booking…",
+    successT: "Booking confirmed!", successP: "Your booking has been saved. We'll call you shortly to confirm the pickup.",
+    bookingId: "Booking ID", viewDetails: "View Booking Details", chat: "Chat on WhatsApp",
+    error: "We couldn't save your booking just now. Please call us at +91 9506636245.",
+    done: "Done", statusLabel: "Status"
+  },
+  track: {
+    title: "Track Your Booking", intro: "Enter your booking ID and the mobile number used while booking.",
+    idLabel: "Booking ID", idPh: "e.g. DC-4F2K9A", phoneLabel: "Mobile Number", phonePh: "10-digit mobile number",
+    submit: "Check Status", checking: "Checking…",
+    notFound: "No booking found for that booking ID and mobile number.",
+    currentStatus: "Current status", yourBooking: "TRACK REPAIR",
+    error: "Something went wrong. Please try again."
+  },
   layout: {
     announcement: "Doorstep repairs across Silvassa & nearby areas",
     callUs: "Call us: +91 9506636245",
-    nav: { services: "Services", how: "How it works", sell: "Sell your phone", contact: "Contact", talk: "Talk to us", book: "Book a pickup" },
+    nav: { services: "Services", how: "How it works", sell: "Sell your phone", contact: "Contact", talk: "Talk to us", book: "Book a pickup", chat: "Chat on WhatsApp", track: "Track booking" },
     footerTag: "Fast, reliable, secure mobile repair pickup & delivery.",
     explore: "Explore", company: "Company", reachUs: "Reach us",
     links: { services: "Services", how: "How it works", sell: "Sell your phone", faq: "FAQ", contact: "Contact Us", privacy: "Privacy Policy", delete: "Delete Account", admin: "Admin Login" },
@@ -65,7 +91,7 @@ export default {
     app: {
       eyebrow: "DOLMENCARE, IN YOUR POCKET", t1: "Track your repair.", t2: "Anytime, anywhere.",
       sub: "Get live updates, manage pickups, and reach us faster with the Dolmencare Android app.",
-      download: "Download Android app", comingSoon: "Android app — coming soon", onWay: "The Dolmencare app is on its way"
+      download: "Download Android app", comingSoon: "Android app — coming soon", onWay: "The Dolmencare app is on its way", trackBtn: "Track your booking"
     },
     reviews: {
       eyebrow: "KIND WORDS", t1: "Good repairs.", t2: "Great stories.",

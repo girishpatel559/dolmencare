@@ -9,6 +9,7 @@ import ServicesPage from "@/pages/ServicesPage";
 import ContactPage from "@/pages/ContactPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import DeleteAccountPage from "@/pages/DeleteAccountPage";
+import { BookingProvider } from "@/components/BookingContext";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useEffect } from "react";
 
@@ -41,15 +42,17 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <LanguageProvider>
-          <ScrollManager />
-          <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/delete-account" element={<DeleteAccountPage />} />
-            <Route path="/admin" element={<AdminApp />} />
-          </Routes>
+          <BookingProvider>
+            <ScrollManager />
+            <Routes>
+              <Route path="/" element={<App />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/delete-account" element={<DeleteAccountPage />} />
+              <Route path="/admin" element={<AdminApp />} />
+            </Routes>
+          </BookingProvider>
         </LanguageProvider>
       </BrowserRouter>
     </QueryClientProvider>

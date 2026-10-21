@@ -306,6 +306,40 @@ class StatusUpdate(BaseModel):
     status: Literal["pending", "accepted", "rejected"]
 
 
+BOOKING_STATUSES = ["pending", "accepted", "pickup_scheduled", "device_received", "repair_in_progress", "repair_completed", "out_for_delivery", "delivered", "cancelled"]
+DEFAULT_WHATSAPP = "919506636245"
+
+
+class BookingCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=80)
+    phone: str = Field(min_length=10, max_length=15, pattern=r"^\+?[0-9\s-]{10,15}$")
+    brand: str = Field(min_length=2, max_length=40)
+    model: str = Field(min_length=2, max_length=80)
+    problem: str = Field(min_length=2, max_length=80)
+    description: Optional[str] = Field(default=None, max_length=600)
+    address: str = Field(min_length=5, max_length=300)
+    client_token: str = Field(min_length=8, max_length=64)
+
+
+class BookingLookup(BaseModel):
+    booking_id: str = Field(min_length=4, max_length=20)
+    phone: str = Field(min_length=10, max_length=15)
+
+
+class BookingAdminUpdate(BaseModel):
+    status: Optional[Literal["pending", "accepted", "pickup_scheduled", "device_received", "repair_in_progress", "repair_completed", "out_for_delivery", "delivered", "cancelled"]] = None
+    reason: Optional[str] = Field(default=None, max_length=300)
+    note: Optional[str] = Field(default=None, max_length=500)
+
+
+class WhatsAppSetting(BaseModel):
+    number: str = Field(min_length=10, max_length=16)
+
+
+def booking_summary(doc: dict) -> dict:
+    return {key: doc.get(key) for key in ("booking_id", "name", "phone", "brand", "model", "problem", "description", "address", "status", "created_at", "updated_at")}
+
+
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -485,6 +519,115 @@ async def download_apk():
     )
 
 
+@api_router.post("/bookings")
+async def create_booking(input: BookingCreate):
+    existing = await db.bookings.find_one({"client_token": input.client_token}, {"_id": 0, "client_token": 0})
+    if existing:
+        return booking_summary(existing)
+    now = datetime.now(timezone.utc).isoformat()
+    booking_id = None
+    for _ in range(5):
+        candidate = "DC-" + uuid.uuid4().hex[:6].upper()
+        if not await db.bookings.find_one({"booking_id": candidate}):
+            booking_id = candidate
+            break
+    doc = {
+        "id": str(uuid.uuid4()),
+        "booking_id": booking_id,
+        "name": input.name.strip(),
+        "phone": input.phone.strip(),
+        "brand": input.brand,
+        "model": input.model.strip(),
+        "problem": input.problem,
+        "description": input.description,
+        "address": input.address.strip(),
+        "status": "pending",
+        "status_history": [{"status": "pending", "at": now, "by": "customer"}],
+        "admin_notes": "",
+        "cancellation_reason": None,
+        "client_token": input.client_token,
+        "created_at": now,
+        "updated_at": now,
+    }
+    try:
+        await db.bookings.insert_one(doc)
+    except Exception:
+        existing = await db.bookings.find_one({"client_token": input.client_token}, {"_id": 0, "client_token": 0})
+        if existing:
+            return booking_summary(existing)
+        raise
+    return booking_summary(doc)
+
+
+@api_router.post("/bookings/lookup")
+async def lookup_booking(input: BookingLookup):
+    booking = await db.bookings.find_one({"booking_id": input.booking_id.strip().upper()}, {"_id": 0})
+    digits = re.sub(r"\D", "", input.phone)
+    stored = re.sub(r"\D", "", booking["phone"]) if booking else ""
+    if not booking or not digits or digits[-10:] != stored[-10:]:
+        raise HTTPException(status_code=404, detail="No booking found for that ID and mobile number.")
+    return {
+        "booking_id": booking["booking_id"],
+        "name": booking["name"],
+        "brand": booking["brand"],
+        "model": booking["model"],
+        "problem": booking["problem"],
+        "status": booking["status"],
+        "created_at": booking["created_at"],
+        "updated_at": booking["updated_at"],
+    }
+
+
+@api_router.get("/settings/whatsapp")
+async def get_whatsapp_setting():
+    doc = await db.settings.find_one({"key": "whatsapp_number"}, {"_id": 0})
+    return {"number": doc["value"] if doc else DEFAULT_WHATSAPP}
+
+
+@api_router.get("/admin/bookings")
+async def list_bookings(admin: dict = Depends(require_admin)):
+    bookings = await db.bookings.find({}, {"_id": 0, "client_token": 0}).sort("created_at", -1).to_list(1000)
+    return {"bookings": bookings}
+
+
+@api_router.patch("/admin/bookings/{booking_id}")
+async def update_booking(booking_id: str, input: BookingAdminUpdate, admin: dict = Depends(require_admin)):
+    booking = await db.bookings.find_one({"booking_id": booking_id})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    now = datetime.now(timezone.utc).isoformat()
+    update = {"updated_at": now}
+    push = None
+    if input.status and input.status != booking.get("status"):
+        update["status"] = input.status
+        push = {"status": input.status, "at": now, "by": admin["email"]}
+        if input.status == "cancelled":
+            update["cancellation_reason"] = input.reason or None
+    elif input.status == "cancelled" and input.reason is not None:
+        update["cancellation_reason"] = input.reason or None
+    if input.note is not None:
+        update["admin_notes"] = input.note
+    update_op = {"$set": update}
+    if push:
+        update_op["$push"] = {"status_history": push}
+    await db.bookings.update_one({"booking_id": booking_id}, update_op)
+    return await db.bookings.find_one({"booking_id": booking_id}, {"_id": 0, "client_token": 0})
+
+
+@api_router.put("/admin/settings/whatsapp")
+async def set_whatsapp_setting(input: WhatsAppSetting, admin: dict = Depends(require_admin)):
+    number = re.sub(r"[\s-]", "", input.number)
+    if not re.fullmatch(r"\+?[0-9]{10,15}", number):
+        raise HTTPException(status_code=400, detail="Enter the number in international format, e.g. +919506636245")
+    value = number.lstrip("+")
+    await db.settings.update_one(
+        {"key": "whatsapp_number"},
+        {"$set": {"key": "whatsapp_number", "value": value, "updated_at": datetime.now(timezone.utc).isoformat(), "updated_by": admin["email"]}},
+        upsert=True,
+    )
+    return {"number": value}
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -503,6 +646,8 @@ logger = logging.getLogger(__name__)
 async def startup():
     await db.users.create_index("email", unique=True)
     await db.login_attempts.create_index("identifier")
+    await db.bookings.create_index("booking_id", unique=True)
+    await db.bookings.create_index("client_token", unique=True)
     await seed_admin()
     try:
         init_storage()

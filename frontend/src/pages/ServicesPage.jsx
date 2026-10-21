@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ArrowRight, BatteryCharging, MessageCircle, Phone, Smartphone, Wrench, Zap } from "lucide-react";
-import SiteLayout, { openWhatsApp } from "@/components/SiteLayout";
+import SiteLayout from "@/components/SiteLayout";
+import { useBooking } from "@/components/BookingContext";
 import { useLanguage } from "@/i18n/LanguageContext";
 import "./pages.css";
 
@@ -8,6 +9,7 @@ const cardIcons = [Smartphone, BatteryCharging, Zap, Wrench, MessageCircle];
 
 export default function ServicesPage() {
   const { t } = useLanguage();
+  const { openBooking } = useBooking();
   const S = t.servicesPage;
   useEffect(() => { document.title = "Services — Dolmencare Mobile Repair"; }, []);
   return (
@@ -18,7 +20,7 @@ export default function ServicesPage() {
           <h1>{S.t1} <span>{S.t2}</span></h1>
           <p>{S.sub}</p>
           <div className="page-cta-row">
-            <button className="button" onClick={() => openWhatsApp(t.bookMessage)} data-testid="services-book-button">{S.book} <ArrowRight size={17} /></button>
+            <button className="button" onClick={openBooking} data-testid="services-book-button">{S.book} <ArrowRight size={17} /></button>
             <a className="button button-ghost" href="tel:+919506636245" data-testid="services-call-button"><Phone size={16} /> {S.call}</a>
           </div>
         </div>
