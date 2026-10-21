@@ -5,18 +5,24 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
 import os
+import re
 import uuid
 import logging
+import ipaddress
 from datetime import datetime, timezone, timedelta
+from html import escape
+from html.parser import HTMLParser
 from typing import List, Literal, Optional
+from urllib.parse import urlparse
 
 import bcrypt
+import httpx
 import jwt
 import requests
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, UploadFile, File, Depends
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 mongo_url = os.environ["MONGO_URL"]
 client = AsyncIOMotorClient(mongo_url)
@@ -33,6 +39,120 @@ EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
 APP_NAME = "dolmencare"
 APK_PATH = f"{APP_NAME}/app/dolmencare.apk"
 storage_key = None
+
+EMAIL_BASE_URL = "https://integrations.emergentagent.com"
+EMAIL_KEY = os.environ.get("EMERGENT_EMAIL_KEY")
+EMAIL_FROM_NAME = os.environ.get("EMAIL_FROM_NAME", "Dolmencare")
+EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
+
+_SHORTENERS = ("bit.ly", "tinyurl.com", "t.co", "is.gd", "cutt.ly", "goo.gl", "rebrand.ly")
+_CRED_ASK = ("reply with your password", "reply with the code", "send your password", "cvv",
+             "send us your password", "enter your password below", "confirm your card number",
+             "your full card number", "seed phrase", "recovery phrase", "verify your card",
+             "social security number", "confirm your bank details")
+_HOSTISH = re.compile(r"\b(?:https?://)?((?:[a-z0-9-]+\.)+[a-z]{2,})", re.I)
+
+
+def _host_ok(host: str) -> bool:
+    if not host or "xn--" in host:
+        return False
+    try:
+        ipaddress.ip_address(host)
+        return False
+    except ValueError:
+        pass
+    return not any(host == s or host.endswith("." + s) for s in _SHORTENERS)
+
+
+def _same_site(shown: str, real: str) -> bool:
+    return shown == real or real.endswith("." + shown) or shown.endswith("." + real)
+
+
+class _EmailScan(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.tags, self.urls, self.anchors = set(), [], []
+        self._href, self._text = None, []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.add(tag.lower())
+        self.urls += [v for k, v in attrs if k.lower() in ("href", "src") and v]
+        if tag.lower() == "a":
+            self._href = dict((k.lower(), v) for k, v in attrs).get("href")
+            self._text = []
+
+    def handle_data(self, data):
+        if self._href is not None:
+            self._text.append(data)
+
+    def handle_endtag(self, tag):
+        if tag.lower() == "a" and self._href is not None:
+            self.anchors.append((self._href, "".join(self._text)))
+            self._href, self._text = None, []
+
+
+def _assert_safe_email(subject: str, html: str) -> None:
+    scan = _EmailScan()
+    scan.feed(html)
+    if scan.tags & {"form", "input", "textarea", "select"}:
+        raise ValueError("No forms or input fields in email (G2)")
+    body = f"{subject}\n{html}".lower()
+    for p in _CRED_ASK:
+        if p in body:
+            raise ValueError(f"Email asks the recipient for credentials: {p!r} (G2)")
+    for url in scan.urls:
+        low = url.strip().lower()
+        if low.startswith(("mailto:", "tel:", "cid:", "#")):
+            continue
+        if not low.startswith("https://"):
+            raise ValueError(f"Email links/assets must be absolute https: {url!r} (G3)")
+        host = urlparse(low).hostname or ""
+        if not _host_ok(host) or urlparse(low).username is not None:
+            raise ValueError(f"Shortened, numeric-host or credential-bearing URL: {url!r} (G3)")
+    for href, text in scan.anchors:
+        real = urlparse(href.strip().lower()).hostname or ""
+        if not real:
+            continue
+        for m in _HOSTISH.finditer(text):
+            if not _same_site(m.group(1).lower(), real):
+                raise ValueError(f"Anchor text {m.group(1)!r} != real link host {real!r} (G3)")
+
+
+async def send_email(*, to: str, subject: str, html: str) -> Optional[str]:
+    _assert_safe_email(subject, html)
+    payload = {"to": [to], "subject": subject, "html": html, "from_name": EMAIL_FROM_NAME}
+    if EMAIL_REPLY_TO:
+        payload["contact_email"] = EMAIL_REPLY_TO
+    async with httpx.AsyncClient(timeout=30) as http:
+        resp = await http.post(
+            f"{EMAIL_BASE_URL}/api/v1/email/send",
+            headers={"X-Email-Key": EMAIL_KEY},
+            json=payload,
+        )
+    resp.raise_for_status()
+    return resp.json().get("id")
+
+
+def lead_status_email(lead: dict, status: str):
+    detail = escape(lead.get("issue") or lead.get("model") or "your device")
+    if status == "accepted":
+        headline = "Good news — your enquiry has been accepted."
+        body = "Our team has accepted your request and will call you shortly to confirm the details and next steps."
+    else:
+        headline = "An update on your enquiry."
+        body = "Unfortunately we are unable to take up this request right now. You are welcome to call us to discuss alternatives."
+    subject = f"Dolmencare: your enquiry has been {status}"
+    html = (
+        '<table role="presentation" width="100%"><tr><td style="padding:24px;font-family:Arial,sans-serif;color:#0f172a">'
+        f'<h2 style="margin:0 0 12px">{escape(EMAIL_FROM_NAME)}</h2>'
+        f'<p style="font-size:16px"><strong>{headline}</strong></p>'
+        f'<p>{body}</p>'
+        f'<p style="color:#475569">Your request: <strong>{detail}</strong></p>'
+        '<p>Questions? Call us at <a href="tel:+919506636245">+91 9506636245</a> — we are happy to help.</p>'
+        f'<p style="font-size:12px;color:#888">Sent by {escape(EMAIL_FROM_NAME)} (Yashashree Corporation), Silvassa. '
+        'We never ask for your password, PIN or OTP by email.</p></td></tr></table>'
+    )
+    return subject, html
 
 
 def init_storage(force: bool = False):
@@ -163,6 +283,7 @@ class StatusCheckCreate(BaseModel):
 class LeadCreate(BaseModel):
     type: Literal["quote", "sell"]
     phone: str = Field(min_length=10, max_length=15, pattern=r"^\+?[0-9\s-]{10,15}$")
+    email: Optional[EmailStr] = None
     brand: Optional[str] = None
     issue: Optional[str] = None
     model: Optional[str] = None
@@ -215,6 +336,7 @@ async def create_lead(input: LeadCreate):
         "id": str(uuid.uuid4()),
         "type": input.type,
         "phone": input.phone,
+        "email": str(input.email) if input.email else None,
         "brand": input.brand,
         "issue": input.issue,
         "model": input.model,
@@ -298,7 +420,17 @@ async def update_lead_status(lead_id: str, input: StatusUpdate, admin: dict = De
     )
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Lead not found")
-    return {"id": lead_id, "status": input.status}
+    email_sent = False
+    if input.status in ("accepted", "rejected"):
+        lead = await db.leads.find_one({"id": lead_id}, {"_id": 0})
+        if lead and lead.get("email"):
+            try:
+                subject, html = lead_status_email(lead, input.status)
+                await send_email(to=lead["email"], subject=subject, html=html)
+                email_sent = True
+            except Exception as exc:
+                logger.warning(f"Status email not sent for lead {lead_id}: {exc}")
+    return {"id": lead_id, "status": input.status, "email_sent": email_sent}
 
 
 @api_router.post("/admin/apk")

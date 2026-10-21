@@ -26,6 +26,7 @@ Build a clean, trustworthy light-theme website for Dolmencare mobile repair pick
 - 2026-10-18 (session 2): admin auth (login/logout/me/refresh, seeded admin, lockout), admin dashboard with status/type filters and accept/reject, APK upload/replace in admin, public `/api/app/apk-info` + `/api/app/download`, "Dolmencare" rebrand, favicon + page title/meta, framer-motion section reveals + hero masked line reveal, brand marquee, lenis smooth scrolling.
 - 2026-10-18 (session 2): real APK (Dolmencare.apk, ~89 MB) published via admin upload; public download verified byte-identical.
 - 2026-10-18 (session 3): multi-page structure — shared SiteLayout (nav + footer) extracted; new routes /services, /contact, /privacy, /delete-account with the owner-supplied copy (Silvassa service area, Yashashree Corporation, Asha Complex address); home updated to Silvassa, pay-after-delivery steps; ScrollManager for cross-page hash anchors; per-page document titles.
+- 2026-10-21 (session 4): footer "Admin Login" link; email status notifications via Emergent-managed Resend (EMERGENT_EMAIL_KEY, from_name "Dolmencare", reply-to business email); optional email field added to quote + sell forms and shown on admin lead cards; PATCH status sends templated accept/reject email when lead has an email; admin UI shows "customer notified" notice. Deploy requested but NOT yet confirmed by user (50 ECU charge pending explicit confirmation).
 
 ## Backlog
 - P0: none open.

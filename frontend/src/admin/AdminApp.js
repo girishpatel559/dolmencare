@@ -29,6 +29,7 @@ export default function AdminApp() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [actionError, setActionError] = useState("");
+  const [notice, setNotice] = useState("");
   const [apk, setApk] = useState(null);
   const [apkBusy, setApkBusy] = useState(false);
   const [apkMsg, setApkMsg] = useState("");
@@ -110,7 +111,10 @@ export default function AdminApp() {
       });
       if (res.status === 401) { setUser(false); return; }
       if (!res.ok) throw new Error();
+      const body = await res.json();
       setLeads((current) => current.map((item) => (item.id === lead.id ? { ...item, status } : item)));
+      setNotice(body.email_sent ? `Enquiry ${status} — customer notified by email.` : `Enquiry marked as ${status}.`);
+      setTimeout(() => setNotice(""), 5000);
     } catch {
       setActionError("Could not update that enquiry. Please try again.");
     }
@@ -206,6 +210,7 @@ export default function AdminApp() {
             </div>
           </div>
           {actionError && <p className="admin-error" data-testid="admin-action-error">{actionError}</p>}
+          {notice && <p className="admin-notice" data-testid="admin-action-notice">{notice}</p>}
           {leadsLoading ? (
             <p className="admin-empty" data-testid="leads-loading">Loading enquiries…</p>
           ) : visible.length === 0 ? (
@@ -227,6 +232,7 @@ export default function AdminApp() {
                         {lead.issue && <li><b>Issue</b>{lead.issue}</li>}
                         {lead.model && <li><b>Model</b>{lead.model}</li>}
                         {lead.condition && <li><b>Condition</b>{lead.condition}</li>}
+                        {lead.email && <li><b>Email</b>{lead.email}</li>}
                         <li><b>Received</b>{formatDate(lead.created_at)}</li>
                       </ul>
                     </div>
