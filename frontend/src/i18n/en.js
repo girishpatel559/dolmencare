@@ -16,12 +16,14 @@ export default {
     successT: "Booking confirmed!", successP: "Your booking has been saved. We'll call you shortly to confirm the pickup.",
     bookingId: "Booking ID", viewDetails: "View Booking Details", chat: "Chat on WhatsApp",
     error: "We couldn't save your booking just now. Please call us at +91 9506636245.",
-    done: "Done", statusLabel: "Status"
+    done: "Done", statusLabel: "Status",
+    locDetect: "Detect my location", locDetecting: "Detecting…", locFound: "Location detected — please confirm the address below.", locError: "Couldn't detect your location. Please type your address."
   },
   track: {
     title: "Track Your Booking", intro: "Enter your booking ID and the mobile number used while booking.",
     idLabel: "Booking ID", idPh: "e.g. DC-4F2K9A", phoneLabel: "Mobile Number", phonePh: "10-digit mobile number",
     submit: "Check Status", checking: "Checking…",
+    idOptional: "forgot ID? Mobile number is enough",
     notFound: "No booking found for that booking ID and mobile number.",
     currentStatus: "Current status", yourBooking: "TRACK REPAIR",
     error: "Something went wrong. Please try again."

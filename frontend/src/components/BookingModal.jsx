@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Check, MessageCircle, X } from "lucide-react";
+import { ArrowRight, Check, MapPin, MessageCircle, X } from "lucide-react";
 import { openWhatsApp } from "@/business";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -13,6 +13,28 @@ export default function BookingModal({ onClose }) {
   const [error, setError] = useState("");
   const [booking, setBooking] = useState(null);
   const [view, setView] = useState("form");
+  const [address, setAddress] = useState("");
+  const [coords, setCoords] = useState(null);
+  const [locState, setLocState] = useState("");
+
+  const detectLocation = () => {
+    if (!navigator.geolocation) { setLocState("error"); return; }
+    setLocState("detecting");
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setCoords({ lat: latitude, lng: longitude });
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=jsonv2`);
+          const data = await res.json();
+          if (data?.display_name) setAddress(data.display_name);
+        } catch { /* coords are still saved with the booking */ }
+        setLocState("done");
+      },
+      () => setLocState("error"),
+      { timeout: 12000, enableHighAccuracy: true },
+    );
+  };
 
   const submit = async (event) => {
     event.preventDefault();
@@ -24,7 +46,13 @@ export default function BookingModal({ onClose }) {
       const res = await fetch(`${API}/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, client_token: clientToken }),
+        body: JSON.stringify({
+          ...data,
+          address,
+          lat: coords?.lat ?? null,
+          lng: coords?.lng ?? null,
+          client_token: clientToken,
+        }),
       });
       if (!res.ok) throw new Error(`booking failed ${res.status}`);
       setBooking(await res.json());
@@ -59,7 +87,10 @@ export default function BookingModal({ onClose }) {
               <label>{B.desc} <small style={{ fontWeight: 400, color: "#64748b" }}>({B.descOpt})</small><textarea name="description" rows="3" placeholder={B.descPh} data-testid="booking-description-input" /></label>
               <label>{B.name}<input name="name" required placeholder={B.namePh} data-testid="booking-name-input" /></label>
               <label>{B.phone}<input name="phone" required type="tel" placeholder={B.phonePh} data-testid="booking-phone-input" /></label>
-              <label>{B.address}<textarea name="address" required rows="2" placeholder={B.addressPh} data-testid="booking-address-input" /></label>
+              <button type="button" className="locate-btn" onClick={detectLocation} disabled={locState === "detecting"} data-testid="booking-detect-location"><MapPin size={15} /> {locState === "detecting" ? B.locDetecting : B.locDetect}</button>
+              {locState === "done" && <p className="loc-note" data-testid="booking-location-ok">{B.locFound}</p>}
+              {locState === "error" && <p className="form-error" data-testid="booking-location-error">{B.locError}</p>}
+              <label>{B.address}<textarea name="address" required rows="2" placeholder={B.addressPh} value={address} onChange={(e) => setAddress(e.target.value)} data-testid="booking-address-input" /></label>
               <button className="button full-button" type="submit" disabled={submitting} data-testid="booking-submit-button">{submitting ? B.submitting : B.submit} <ArrowRight size={17} /></button>
             </form>
           </>

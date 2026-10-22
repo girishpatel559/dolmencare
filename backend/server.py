@@ -318,12 +318,9 @@ class BookingCreate(BaseModel):
     problem: str = Field(min_length=2, max_length=80)
     description: Optional[str] = Field(default=None, max_length=600)
     address: str = Field(min_length=5, max_length=300)
+    lat: Optional[float] = None
+    lng: Optional[float] = None
     client_token: str = Field(min_length=8, max_length=64)
-
-
-class BookingLookup(BaseModel):
-    booking_id: str = Field(min_length=4, max_length=20)
-    phone: str = Field(min_length=10, max_length=15)
 
 
 class BookingAdminUpdate(BaseModel):
@@ -519,6 +516,25 @@ async def download_apk():
     )
 
 
+class BookingLookup(BaseModel):  # redefined here so phone-only tracking works (booking ID optional)
+    booking_id: Optional[str] = Field(default=None, max_length=20)
+    phone: str = Field(min_length=10, max_length=15)
+
+
+def booking_public(doc: dict, verified: bool) -> dict:
+    name = doc["name"] if verified else " ".join(part[0] + "*" * (len(part) - 1) for part in doc["name"].split())
+    return {
+        "booking_id": doc["booking_id"],
+        "name": name,
+        "brand": doc["brand"],
+        "model": doc["model"],
+        "problem": doc["problem"],
+        "status": doc["status"],
+        "created_at": doc["created_at"],
+        "updated_at": doc["updated_at"],
+    }
+
+
 @api_router.post("/bookings")
 async def create_booking(input: BookingCreate):
     existing = await db.bookings.find_one({"client_token": input.client_token}, {"_id": 0, "client_token": 0})
@@ -541,6 +557,8 @@ async def create_booking(input: BookingCreate):
         "problem": input.problem,
         "description": input.description,
         "address": input.address.strip(),
+        "lat": input.lat,
+        "lng": input.lng,
         "status": "pending",
         "status_history": [{"status": "pending", "at": now, "by": "customer"}],
         "admin_notes": "",
@@ -561,21 +579,20 @@ async def create_booking(input: BookingCreate):
 
 @api_router.post("/bookings/lookup")
 async def lookup_booking(input: BookingLookup):
-    booking = await db.bookings.find_one({"booking_id": input.booking_id.strip().upper()}, {"_id": 0})
     digits = re.sub(r"\D", "", input.phone)
-    stored = re.sub(r"\D", "", booking["phone"]) if booking else ""
-    if not booking or not digits or digits[-10:] != stored[-10:]:
-        raise HTTPException(status_code=404, detail="No booking found for that ID and mobile number.")
-    return {
-        "booking_id": booking["booking_id"],
-        "name": booking["name"],
-        "brand": booking["brand"],
-        "model": booking["model"],
-        "problem": booking["problem"],
-        "status": booking["status"],
-        "created_at": booking["created_at"],
-        "updated_at": booking["updated_at"],
-    }
+    if len(digits) < 10:
+        raise HTTPException(status_code=404, detail="No booking found for that mobile number.")
+    last10 = digits[-10:]
+    if input.booking_id:
+        booking = await db.bookings.find_one({"booking_id": input.booking_id.strip().upper()}, {"_id": 0, "client_token": 0})
+        stored = re.sub(r"\D", "", booking["phone"]) if booking else ""
+        if not booking or last10 != stored[-10:]:
+            raise HTTPException(status_code=404, detail="No booking found for that ID and mobile number.")
+        return {"bookings": [booking_public(booking, verified=True)]}
+    bookings = await db.bookings.find({"phone": {"$regex": re.escape(last10) + "$"}}, {"_id": 0, "client_token": 0}).sort("created_at", -1).to_list(10)
+    if not bookings:
+        raise HTTPException(status_code=404, detail="No booking found for that mobile number.")
+    return {"bookings": [booking_public(b, verified=False) for b in bookings]}
 
 
 @api_router.get("/settings/whatsapp")
